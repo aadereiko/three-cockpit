@@ -1,4 +1,5 @@
-# A model mouse move
+# A cockpit 
 
 A tasks list:
-  - make model moving by clicking on plane
+  - create shapes by yourself
+  - animate them
