@@ -10,6 +10,7 @@ import { createOrbitControls } from "./systems/controls.js";
 import { createSea } from "./components/sea.js";
 import { createSky } from "./components/sky.js";
 import { createAirPlane } from "./components/airPlane.js";
+import { createPilot, getHairs } from "./components/pilot.js";
 
 let camera;
 let renderer;
@@ -25,12 +26,10 @@ class World {
     loop = new Loop(camera, scene, renderer);
     container.append(renderer.domElement);
 
-    const orbitControls = createOrbitControls(camera, renderer.domElement);
-    document.addEventListener("click", function () {
-      console.log(camera.position);
-    });
+    // const orbitControls = createOrbitControls(camera, renderer.domElement);
+
     // orbitControls.enabled = false;
-    const { hemisphereLight, shadowLight } = createLights();
+    const { hemisphereLight, shadowLight, ambientLight } = createLights();
 
     // loop.updatables.push(orbitControls);
 
@@ -39,14 +38,16 @@ class World {
     const { axesHelper } = createHelpers();
     const sea = createSea();
     const sky = createSky();
-    const { airPlane, propeller } = createAirPlane();
-    loop.updatables.push(propeller, sea, sky, airPlane);
 
-    scene.add(hemisphereLight, shadowLight);
+    const { airPlane, propeller } = createAirPlane();
+    const hairs = getHairs();
+    loop.updatables.push(propeller, sea, sky, airPlane, hairs);
+
+    scene.add(hemisphereLight, shadowLight,ambientLight);
     scene.add(sea);
     scene.add(sky);
     scene.add(airPlane);
-    scene.add(axesHelper);
+    // scene.add(axesHelper);
   }
 
   async init() {}

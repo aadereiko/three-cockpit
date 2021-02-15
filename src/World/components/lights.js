@@ -1,4 +1,5 @@
 import { DirectionalLight, HemisphereLight } from "three";
+import { AmbientLight } from "three/build/three.module";
 
 function createLights() {
   // A hemisphere light is a gradient colored light;
@@ -9,6 +10,9 @@ function createLights() {
   // A directional light shines from a specific direction.
   // It acts like the sun, that means that all the rays produced are parallel.
   const shadowLight = new DirectionalLight(0xffffff, 0.9);
+
+  const ambientLight = new AmbientLight(0xdc8874, 0.5);
+
 
   // Set the direction of the light
   shadowLight.position.set(150, 350, 350);
@@ -28,7 +32,7 @@ function createLights() {
   // but also the more expensive and less performant
   shadowLight.shadow.mapSize.width = 2048;
   shadowLight.shadow.mapSize.height = 2048;
-  return { hemisphereLight, shadowLight };
+  return { hemisphereLight, shadowLight, ambientLight };
 }
 
 export { createLights };

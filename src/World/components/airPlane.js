@@ -6,14 +6,26 @@ const {
   Mesh,
 } = require("three");
 import { COLORS } from "../../styles/colors";
+import { createPilot } from "./pilot";
 
 let airPlane = null;
 let propeller = null;
 
 function createAirPlane() {
+  const { pilot } = createPilot();
   airPlane = new Object3D();
 
   const geomCockpit = new BoxGeometry(60, 50, 50, 1, 1, 1);
+
+  geomCockpit.vertices[4].y -= 10;
+  geomCockpit.vertices[4].z += 20;
+  geomCockpit.vertices[5].y -= 10;
+  geomCockpit.vertices[5].z -= 20;
+  geomCockpit.vertices[6].y += 30;
+  geomCockpit.vertices[6].z += 20;
+  geomCockpit.vertices[7].y += 30;
+  geomCockpit.vertices[7].z -= 20;
+
   const matCockpit = new MeshPhongMaterial({
     color: COLORS.red,
     shading: FlatShading,
@@ -84,10 +96,12 @@ function createAirPlane() {
   airPlane.add(propeller);
   airPlane.tick = () => {
     updatePlane();
-  }
+  };
 
   // airPlane.scale.set(0.25, 0.25, 0.25);
   // airPlane.position.z = 200;
+  airPlane.add(pilot);
+  pilot.position.y += 30;
 
   return { airPlane, propeller };
 }
@@ -111,17 +125,19 @@ function handleMouseMove(event) {
 }
 
 function updatePlane() {
-  // let's move the airplane between -100 and 100 on the horizontal axis,
   // and between 25 and 175 on the vertical axis,
   // depending on the mouse position which ranges between -1 and 1 on both axes;
   // to achieve that we use a normalize function (see below)
+  const targetY = normalize(mousePos.y, -0.75, 0.75, 25, 175);
 
-  const targetX = normalize(mousePos.x, -1, 1, -100, 100);
-	const targetY = normalize(mousePos.y, -1, 1, 25, 175);
+  // Move the plane at each frame by adding a fraction of the remaining distance
+  airPlane.position.y += (targetY - airPlane.position.y) * 0.1;
 
-  airPlane.position.y = targetY;
-	airPlane.position.x = targetX;
-	propeller.rotation.x += 0.3;
+	// Rotate the plane proportionally to the remaining distance
+
+  airPlane.rotation.z = (targetY - airPlane.position.y) * 0.0128;
+  airPlane.rotation.x = (airPlane.position.y - targetY) * 0.0064;
+  propeller.rotation.x += 0.3;
 }
 
 function normalize(v, vmin, vmax, tmin, tmax) {
